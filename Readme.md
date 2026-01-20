@@ -145,8 +145,8 @@ python infer.py --weights './output/epoch-10/checkpoint_best_total.pth' \
 ```
 *(If `--save-imgs` is `false`, it will show each frame iteratively)*
 
-### *[Download](https://drive.google.com/file/d/1WSZ47Xc9SXd5Hghp2-S0-vd5i20Wgwlo/view?usp=sharing) all test dataset images with predicted labels.*
+#### *[Download](https://drive.google.com/file/d/1WSZ47Xc9SXd5Hghp2-S0-vd5i20Wgwlo/view?usp=sharing) all test dataset images with predicted labels.*
 
-## Some good & bad predictions:
+### Some good & bad predictions:
 
-### [Examples.md](./Examples.md)
+#### [Examples.md](./Examples.md)

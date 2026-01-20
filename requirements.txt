@@ -1,0 +1,9 @@
+opencv-python
+Pillow
+natsort
+numpy
+supervision
+pandas
+matplotlib
+seaborn
+rfdetr

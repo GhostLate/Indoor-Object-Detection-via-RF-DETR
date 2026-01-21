@@ -1,3 +1,4 @@
+import argparse
 import json
 import os
 import shutil
@@ -55,21 +56,21 @@ def split_list_by_ratios2(data: list[dict], split_ratios: dict):
     return splits
 
 
-def process_merge(strategy):
+def process_merge(strategy, data_dir, save_dir):
     splits_names = set([split for split in strategy.values() if isinstance(split, str)])
     splits_names.update(set([key for split in strategy.values() if isinstance(split, dict) for key in split['splits'].keys()]))
 
     for splits_name in splits_names:
 
-        shutil.rmtree(os.path.join(OUTPUT_DIR, splits_name), ignore_errors=True)
-        os.makedirs(os.path.join(OUTPUT_DIR, splits_name), exist_ok=True)
+        shutil.rmtree(os.path.join(save_dir, splits_name), ignore_errors=True)
+        os.makedirs(os.path.join(save_dir, splits_name), exist_ok=True)
 
     # Prepare output containers
     splits = {splits_name: initialize_coco() for splits_name in splits_names}
     global_categories = {}
 
     for seq_name, assignment in strategy.items():
-        json_path = os.path.join(INPUT_DIR, seq_name, "_annotations.coco.json")
+        json_path = os.path.join(data_dir, seq_name, "_annotations.coco.json")
 
         if not os.path.exists(json_path):
             print(f"Skipping {seq_name} (File not found)")
@@ -114,8 +115,8 @@ def process_merge(strategy):
                 new_file_name = img_subset['file_name'].split('.')
                 new_file_name[-2] = f"{new_file_name[-2]}_{img_subset['id']}"
                 new_file_name = '.'.join(new_file_name)
-                shutil.copy(os.path.join(INPUT_DIR, seq_name, img_subset['file_name']),
-                            os.path.join(OUTPUT_DIR, target_split, new_file_name))
+                shutil.copy(os.path.join(data_dir, seq_name, img_subset['file_name']),
+                            os.path.join(save_dir, target_split, new_file_name))
                 img_subset['file_name'] = new_file_name
 
                 curr_dataset['images'].append(img_subset)
@@ -131,18 +132,26 @@ def process_merge(strategy):
         for split_name, dataset in splits.items():
             dataset['categories'] = list(global_categories.values())
 
-            out_path = os.path.join(OUTPUT_DIR, split_name, "_annotations.coco.json")
+            out_path = os.path.join(save_dir, split_name, "_annotations.coco.json")
             print(
                 f"Saving {split_name}: {len(dataset['images'])} images, {len(dataset['annotations'])} annotations")
             save_json(dataset, out_path)
 
 
+def parse_args():
+    parser = argparse.ArgumentParser(description="Visualize RF-DETR predictions on images.")
+    parser.add_argument("--data-dir", type=str, help="Directory containing dataset.", default='./dataset/')
+    parser.add_argument("--save-dir", type=str, help="Directory to save dataset.", default='./dataset/')
+    return parser.parse_args()
+
+
 if __name__ == "__main__":
+    args = parse_args()
     # --- Configuration ---
     # Define how sequences are distributed
     # "split" means we chop it up by `max_seq` batches by ratio of train, valid, test.
 
-    STRATEGY = {
+    strategy = {
         "sequence_1": {'splits': {'train': 0.8, 'valid': 0.2}, 'max_seq' : 5}, # sequence_1 for Train & Valid
         "sequence_2": {'splits': {'test': 0.6, 'valid': 0.4}, 'max_seq' : 5}, # sequence_2 only for Test & Valid
         "sequence_3": {'splits': {'train': 0.8, 'test': 0.1, 'valid': 0.1}, 'max_seq' : 40}, # sequence_3 for Train, Valid & Test, to fix class bias
@@ -150,8 +159,4 @@ if __name__ == "__main__":
         "sequence_5": {'splits': {'train': 0.8, 'valid': 0.2}, 'max_seq' : 5}, # sequence_5 only for Train & Valid
         "sequence_6": {'splits': {'train': 0.8, 'valid': 0.2}, 'max_seq' : 5}, # sequence_6 only for Train & Valid
     }
-    INPUT_FILENAME = "_annotations.coco.json"
-    INPUT_DIR = "dataset"
-    OUTPUT_DIR = "dataset"
-
-    process_merge(STRATEGY)
+    process_merge(strategy, args.data_dir, args.save_dir)

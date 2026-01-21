@@ -38,13 +38,13 @@ pip install -r ./requirements.txt
 ### 2. To train RF-DETR, convert Indoor Object Detection dataset to COCO format:
 
 ```Bash
-python prepare_coco.py --data-path './dataset/'
+python prepare_coco.py --data-dir './dataset/'
 ```
 
 ### 3. To view dataset statistics:
 
 ```Bash
-python stat_coco.py --data-path './dataset/'
+python stat_coco.py --data-dir './dataset/'
 ```
 
 You will see following metrics:
@@ -57,7 +57,7 @@ You will see following metrics:
 ### 4. Split 6 dataset sequences to Train, Valid, Test:
 
 ```Bash
-python split_coco.py --data-path './dataset/'
+python split_coco.py --data-dir './dataset/' --save-dir './dataset/'
 ```
 
 Default split strategy is:
@@ -79,7 +79,7 @@ STRATEGY = {
 ### 5. View final dataset statistics with `train`, `valid`, `test` splits:
 
 ```Bash
-python split_coco.py --data-path './dataset/'
+python stat_coco.py --data-dir './dataset/'
 ```
 
 ![plot](./docs/dataset_metrics.png)

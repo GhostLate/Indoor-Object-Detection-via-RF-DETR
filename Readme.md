@@ -2,6 +2,8 @@
 
 Fine-tuning [RF-DETR](https://github.com/roboflow/rf-detr) on the [Indoor Object Detection](https://zenodo.org/record/2654485#.YaYShVPMJhE) dataset. 
 
+#### *(Colab version is [here](./RF_DETR_&_Indoor_object_dataset.ipynb))*
+
 ## Requirements
 
 You need a PyTorch 2.7+ environment with CUDA support

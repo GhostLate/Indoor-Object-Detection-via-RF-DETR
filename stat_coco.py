@@ -58,7 +58,7 @@ def load_coco_stats(data_dir):
     return pd.DataFrame(seq_data), pd.DataFrame(bbox_data)
 
 
-def visualize(data_dir):
+def visualize_coco(data_dir):
     df_seq, df_bbox = load_coco_stats(data_dir)
 
     if df_seq.empty:
@@ -114,4 +114,4 @@ def parse_args():
 if __name__ == "__main__":
     args = parse_args()
 
-    visualize(data_dir=args.data_dir)
+    visualize_coco(data_dir=args.data_dir)
